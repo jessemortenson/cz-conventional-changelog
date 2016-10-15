@@ -50,20 +50,20 @@ module.exports = function (options) {
           choices: choices
         }, {
           type: 'input',
-          name: 'scope',
-          message: 'Denote the scope of this change ($location, $browser, $compile, etc.):\n'
+          name: 'task',
+          message: 'Enter Teamwork task url, or url in some other task/ticketing system:\n'
+        }, {
+          type: 'input',
+          name: 'group',
+          message: 'Add any grouping term or tag you want to apply to this commit:\n'
         }, {
           type: 'input',
           name: 'subject',
-          message: 'Write a short, imperative tense description of the change:\n'
+          message: 'Write a short, imperative tense description of the change (shorter than this prompt!):\n'
         }, {
           type: 'input',
           name: 'body',
           message: 'Provide a longer description of the change:\n'
-        }, {
-          type: 'input',
-          name: 'footer',
-          message: 'List any breaking changes or issues closed by this change:\n'
         }
       ]).then(function(answers) {
 
@@ -76,18 +76,19 @@ module.exports = function (options) {
           width: maxLineWidth
         };
 
-        // parentheses are only needed when a scope is present
-        var scope = answers.scope.trim();
-        scope = scope ? '(' + answers.scope.trim() + ')' : '';
+        var group = answers.group.trim();
+        group = group ? '/' + answers.group.trim() : '';
+
+        var task = answers.task.trim();
+        task = task ? '\n\nTask: ' + answers.task.trim() : '';
 
         // Hard limit this line
-        var head = (answers.type + scope + ': ' + answers.subject.trim()).slice(0, maxLineWidth);
+        var head = (answers.type + group + ': ' + answers.subject.trim()).slice(0, maxLineWidth);
 
         // Wrap these lines at 100 characters
         var body = wrap(answers.body, wrapOptions);
-        var footer = wrap(answers.footer, wrapOptions);
 
-        commit(head + '\n\n' + body + '\n\n' + footer);
+        commit(head + '\n\n' + body + task);
       });
     }
   };
