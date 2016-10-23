@@ -59,7 +59,7 @@ module.exports = function (options) {
         }, {
           type: 'input',
           name: 'subject',
-          message: 'Write a short, imperative tense description of the change (shorter than this prompt!):\n'
+          message: 'Write a short description of the change (shorter than this prompt!):\n'
         }, {
           type: 'input',
           name: 'body',
@@ -71,24 +71,23 @@ module.exports = function (options) {
 
         var wrapOptions = {
           trim: true,
-          newline: '\n',
           indent:'',
           width: maxLineWidth
         };
 
         var group = answers.group.trim();
-        group = group ? '/' + answers.group.trim() : '';
+        group = group ? '::' + answers.group.trim() + ':: ' : '';
 
         var task = answers.task.trim();
         task = task ? '\n\nTask: ' + answers.task.trim() : '';
 
         // Hard limit this line
-        var head = (answers.type + group + ': ' + answers.subject.trim()).slice(0, maxLineWidth);
+        var head = (group + answers.subject.trim()).slice(0, maxLineWidth);
 
         // Wrap these lines at 100 characters
         var body = wrap(answers.body, wrapOptions);
 
-        commit(head + '\n\n' + body + task);
+        commit(head + '\n\n' + body + task + "\tType: " + answers.type);
       });
     }
   };
